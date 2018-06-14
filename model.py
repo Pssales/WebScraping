@@ -8,6 +8,16 @@ from sklearn.preprocessing import LabelEncoder
 
 base="Ação","Aéreo","Arcade","Aventura","Beat &39;em Up","Clássicos","Corrida Arcade","Corrida Simulação","Esporte","Estratégia","Família","Fitness","Hack &#39;n&#39; Slash","Luta Arcade","Moba","Moto","Musical","Musou","Nave","Novel","Pinball","Plataforma","Puzzle","Quiz, Cartas e ...","RPG","Simulador","Terror","Tiro"
 usuario="Ação","Aéreo","Arcade","Aventura"
+jogo="Corrida Arcade","Corrida Simulação","Esporte","Estratégia","Família","Fitness"
+
+jogo_encoded=[]
+for i in range(len(base)):
+    valor=0
+    for j in range(len(jogo)):
+        if(base[i]==jogo[j]):
+            valor=1;
+    jogo_encoded.append(valor)     
+
 X=[]
 Y=[]
 for i in range(len(usuario)):
@@ -40,16 +50,16 @@ from keras.utils import to_categorical
 y_binary = to_categorical(y)
 
 model=Sequential()
-model.add(Dense(56,input_dim=28,activation='relu'))
+model.add(Dense(28,input_dim=28,activation='relu'))
 model.add(Dense(2,activation='softmax'))
 model.compile(optimizer='sgd',loss='categorical_crossentropy',metrics=['acc'])
-model.fit(x,y_binary,epochs=2500);
+model.fit(x,y_binary,epochs=850);
 
+print("O usuário costuma jogar:",usuario)
+print("jogo:",jogo)
 ##caso jogo tenha 2 generos em comum com que usuário costuma jogar
-i=[0, 0, 0,1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-t=np.asmatrix(i);
+t=np.asmatrix(jogo_encoded);
 resultado=model.predict(t);
-print(i)
 print("chance de gostar do jogo:",resultado[0][1]*100,"%")
 
 ##np.savetxt("file_name.csv", dataset, delimiter=",", fmt='%s')
