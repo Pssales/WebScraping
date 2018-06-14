@@ -6,7 +6,31 @@ from keras.layers import Dense
 from keras.utils import np_utils
 from sklearn.preprocessing import LabelEncoder
 
-df=pd.read_csv("usuario.csv",header=None)
+base="Ação","Aéreo","Arcade","Aventura","Beat &39;em Up","Clássicos","Corrida Arcade","Corrida Simulação","Esporte","Estratégia","Família","Fitness","Hack &#39;n&#39; Slash","Luta Arcade","Moba","Moto","Musical","Musou","Nave","Novel","Pinball","Plataforma","Puzzle","Quiz, Cartas e ...","RPG","Simulador","Terror","Tiro"
+usuario="Ação","Aéreo","Arcade","Aventura"
+X=[]
+Y=[]
+for i in range(len(usuario)):
+    linha=[]
+    linha2=[]
+    for j in range(len(base)):
+        if(usuario[i]==base[j]):
+            linha.append(1);
+        else:
+            linha.append(0)
+        linha2.append(0)
+    #consta
+    X.append(linha)
+    Y.append(1)
+    #nao consta
+    X.append(linha2)
+    X.append(linha2)
+    Y.append(0)
+    Y.append(0)
+
+np.savetxt("treino.csv", np.column_stack((X,Y)), delimiter=",", fmt='%s')
+
+df=pd.read_csv("treino.csv",header=None)
 dataset=df.values;
 
 x=dataset[:,0:28].astype('float');
@@ -21,10 +45,12 @@ model.add(Dense(2,activation='softmax'))
 model.compile(optimizer='sgd',loss='categorical_crossentropy',metrics=['acc'])
 model.fit(x,y_binary,epochs=2500);
 
-#caso jogo tenha 2 generos em comum com que usuário costuma jogar
+##caso jogo tenha 2 generos em comum com que usuário costuma jogar
 i=[0, 0, 0,1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 t=np.asmatrix(i);
 resultado=model.predict(t);
 print(i)
 print("chance de gostar do jogo:",resultado[0][1]*100,"%")
 
+##np.savetxt("file_name.csv", dataset, delimiter=",", fmt='%s')
+##np.savetxt("file_name.csv", np.column_stack((x, y)), delimiter=",", fmt='%s')
